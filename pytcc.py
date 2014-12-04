@@ -1,9 +1,9 @@
 """
 pytcc is a very simple wrapper around
-libtcc, using ctypes. Requires Python 3.0
-or newer.
+libtcc, using ctypes.
 """
 
+from __future__ import print_function
 import ctypes
 
 __all__ = ['TCCState', 'TCC_OUTPUT_MEMORY', 'TCC_OUTPUT_EXE', 'TCC_OUTPUT_DLL',
@@ -92,7 +92,10 @@ class TCCState(object):
 	
 	def _on_error(self, opaque, message):
 		"""Utility function: store latest error."""
-		self.__last_error = message.decode('ascii')
+		if isinstance(message, str):
+			self.__last_error = message
+		else:
+			self.__last_error = message.decode('ascii')
 	
 	@property
 	def last_error(self):
