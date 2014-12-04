@@ -67,14 +67,17 @@ class TCCError(Exception): pass
 class TCCState(object):
 	"""Wrapper around the TCCState struct in libtcc."""
 	
-	def __init__(self):
-		"""Create a new TCCState object."""
+	def __init__(self, output_type=TCC_OUTPUT_MEMORY):
+		"""Create a new TCCState object. Optionally specify output type (default: in-memory)."""
 		self.__ptr = libtcc.tcc_new()
 		self.__last_error = None
 		
 		# set error callback
 		self.__error_callback = ERROR_CALLBACK(self._on_error)
 		libtcc.tcc_set_error_func(self.__ptr, None, self.__error_callback)
+		
+		# set output type
+		libtcc.tcc_set_output_type(self.__ptr, output_type)
 	
 	def __del__(self):
 		"""Delete TCCState when collected by garbage collector."""
@@ -146,11 +149,6 @@ class TCCState(object):
 	
 	# -------
 	# linking
-	
-	def set_output_type(self, output_type):
-		"""Set output type. Must be called before any compilation."""
-		r = libtcc.tcc_set_output_type(self.__ptr, output_type)
-		if r == -1: raise TCCError(self.__last_error)
 	
 	def add_library_path(self, pathname):
 		"""Add to library path."""
