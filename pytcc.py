@@ -4,7 +4,7 @@ libtcc, using ctypes.
 """
 
 from __future__ import print_function
-import ctypes
+import ctypes, sys, os, struct
 
 __all__ = ['TCCState', 'TCC_OUTPUT_MEMORY', 'TCC_OUTPUT_EXE', 'TCC_OUTPUT_DLL',
 		'TCC_OUTPUT_OBJ', 'TCC_OUTPUT_PREPROCESS']
@@ -23,7 +23,23 @@ TCC_RELOCATE_AUTO = ctypes.c_void_p(1)
 ERROR_CALLBACK = ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.c_char_p)
 
 # libtcc DLL handle
-libtcc = ctypes.cdll.LoadLibrary('libtcc.so')
+try:
+	if sys.platform == 'linux' or sys.platform == 'darwin':
+		ext = 'so'
+		libtcc = ctypes.cdll.LoadLibrary('libtcc.so')
+	elif sys.platform == 'win32':
+		ext = 'dll'
+		libtcc = ctypes.cdll.LoadLibrary('libtcc.dll')
+except OSError:
+	raise Exception(
+		f'Could not find libtcc.{ext} in path. Either add '
+		f'TCC directory to path or CD into the folder containing libtcc.{ext}'
+	)
+except ImportError:
+	raise Exception(
+		'LibTCC was not compiled with the same architecture as this running '
+		'Python process. Either reinstall Python or TCC.'
+	)
 
 # set return type and argument types for all functions in libtcc
 tcc_funcs = {
