@@ -4,7 +4,7 @@ libtcc, using ctypes.
 """
 
 from __future__ import print_function
-import ctypes, sys, os, struct
+import ctypes, sys
 
 __all__ = ['TCCState', 'TCC_OUTPUT_MEMORY', 'TCC_OUTPUT_EXE', 'TCC_OUTPUT_DLL',
 		'TCC_OUTPUT_OBJ', 'TCC_OUTPUT_PREPROCESS']
