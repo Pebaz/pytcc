@@ -23,13 +23,13 @@ TCC_RELOCATE_AUTO = ctypes.c_void_p(1)
 ERROR_CALLBACK = ctypes.CFUNCTYPE(None, ctypes.c_void_p, ctypes.c_char_p)
 
 # libtcc DLL handle
+if sys.platform == 'linux' or sys.platform == 'darwin':
+	ext = 'so'
+elif sys.platform == 'win32':
+	ext = 'dll'
+
 try:
-	if sys.platform == 'linux' or sys.platform == 'darwin':
-		ext = 'so'
-		libtcc = ctypes.cdll.LoadLibrary('libtcc.so')
-	elif sys.platform == 'win32':
-		ext = 'dll'
-		libtcc = ctypes.cdll.LoadLibrary('libtcc.dll')
+	libtcc = ctypes.cdll.LoadLibrary(f'libtcc.{ext}')
 except OSError:
 	raise Exception(
 		f'Could not find libtcc.{ext} in path. Either add '
